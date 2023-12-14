@@ -1,13 +1,101 @@
-body {
+/* :root {
+  --bs-accordion-color: #ffffff !important;
+  --bs-accordion-bg: #141414 !important;
+  --bs-accordion-border-color: #303030 !important;
+  --bs-accordion-border-width: 1px !important;
+  --bs-accordion-border-radius: 8px !important;
+  
+  --bs-accordion-btn-color: #ffffff !important;
+  --bs-accordion-btn-bg: #141414 !important;
+  --bs-accordion-btn-focus-border-color: #198A54 !important;
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(25, 138, 84, 0.25) !important;
+  --bs-accordion-active-color: #198A54 !important;
+  --bs-accordion-active-bg: #141414 !important;
+} */
+
+
+html, body {
   margin: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+/*
+  scrollbar styles
+*/
+
+/* width */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: 'none';
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #198A54; 
+  border-radius: 3.5px;
+  border: 4px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(0,0,0,0);
+}
+
+
+
+.accordion {
+  border: 1px solid #303030 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  min-width: 405px !important;
+  min-height: 45px !important;
+  transition: 0.5s !important;
+}
+.accordion-item {
+  border: 1px solid #303030 !important;
+  border-radius: 8px !important;
+  background: #141414 !important;
+}
+.accordion-header {
+  border: 1px solid #303030 !important;
+  border-color: #303030 !important;
+  box-shadow: none !important;
+}
+.accordion-button {
+  color: #ffffff !important;
+  background: #141414 !important;
+}
+.accordion-collapse {
+  color: #ffffff !important;
+  background: #141414 !important;
+}
+.accordion-body {
+  padding-top: 0 !important;
+}
+
+
+.bordered {
+  border: 3px dashed rgba(255, 0, 0, 0) !important;
+  border-radius: 8px !important;
+  border-image-source:url('./hui.png') !important;
+  border-image-width: 1 !important;
+  border-image-slice: 2 !important; 
+  border-image-repeat: round !important;
+}
+
+.accordion-button:not(.collapsed) {
+  box-shadow: none !important;
 }
