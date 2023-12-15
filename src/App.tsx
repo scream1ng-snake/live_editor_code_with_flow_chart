@@ -75,6 +75,7 @@ function App() {
           theme='vs-dark'
           defaultLanguage='typescript' 
           defaultValue={sourceCode} 
+          onChange={code => { setSourceCode(code ?? '') }}
         />
       </Col>
     </Row>

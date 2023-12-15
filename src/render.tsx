@@ -25,14 +25,11 @@ export function renderSourceFile(sourceFile: ts.SourceFile): React.ReactNode {
 function renderNode(node: ts.Node, getChildren: (node: ts.Node) => (ts.Node[])): React.ReactNode {
   const children = getChildren(node);
   const kindName = ts.SyntaxKind[node.kind];
-  console.log(kindName)
 
   switch (node.kind) {
-    case ts.SyntaxKind.SourceFile: {
-      return (
-        <>{children.map(n => renderNode(n, getChildren))}</>
-      )
-    }
+    case ts.SyntaxKind.SourceFile: 
+      return <>{children.map(n => renderNode(n, getChildren))}</>
+    
     case ts.SyntaxKind.FunctionDeclaration: {
       const functionDecloration = node as ts.FunctionDeclaration;
       const params = functionDecloration.parameters;
@@ -56,14 +53,14 @@ function renderNode(node: ts.Node, getChildren: (node: ts.Node) => (ts.Node[])):
                         {/* @ts-ignore */}
                         <Form.Label column sm={4}>{param.name.escapedText}</Form.Label>
                         <Col>
-                          {param.type?.kind 
-                            ? <Form.Control 
-                              placeholder={ts.SyntaxKind[param.type.kind] ?? ''} 
-                              disabled 
-                              size="sm"
-                              />
-                            : null
-                          }
+                        <Form.Control 
+                          placeholder={param.type?.kind
+                            ? ts.SyntaxKind[param.type.kind]
+                            : 'any'
+                          } 
+                          disabled 
+                          size="sm"
+                        />
                         </Col>
                       </Form.Group>
                     ))}
@@ -78,16 +75,55 @@ function renderNode(node: ts.Node, getChildren: (node: ts.Node) => (ts.Node[])):
         </div>
       )
     }
-    case ts.SyntaxKind.Block: {
+    case ts.SyntaxKind.VariableStatement: {
+      const varStatement = node as ts.VariableStatement;
       return(
-        <>{children.map(n => renderNode(n, getChildren))}</>
+        <div style={huiPizda}>
+          <span style={arrowstyle}>↓</span>
+          <Accordion>
+            <Accordion.Item eventKey={'Обьявления переменных'}>
+              <Accordion.Header>
+                <span style={{ ...piska, color: '#F37300' }}>var</span>
+                <span>{'обьявления переменных'}</span>
+              </Accordion.Header>
+              <Accordion.Body>
+                {varStatement.declarationList.declarations.map(function(decloration, index) {
+                  // @ts-ignore
+                  const name = decloration.name.escapedText
+                  const type = decloration.type?.kind
+                    ? ts.SyntaxKind[decloration.type.kind]
+                    : 'any'
+                  //@ts-ignore
+                  const value = decloration.initializer?.text
+                  return(
+                    <Form.Group as={Row} key={index}>
+                      {/* @ts-ignore */}
+                      <Form.Label column sm={4}>{name}</Form.Label>
+                      <Col>
+                        <Form.Control 
+                          placeholder={type} 
+                          disabled 
+                          size="sm"
+                        />
+                      </Col>
+                      <Col>
+                        <Form.Control 
+                          placeholder={value} 
+                          disabled 
+                          size="sm"
+                        />
+                      </Col>
+                    </Form.Group>
+                  )
+                })}
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        </div>
       )
     }
-    default: {
-      return(
-        <>{children.map(n => renderNode(n, getChildren))}</>
-      )
-    }
+    default: 
+      return <>{children.map(n => renderNode(n, getChildren))}</>
   }
 }
 
