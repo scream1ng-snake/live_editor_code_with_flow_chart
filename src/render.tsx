@@ -1,15 +1,36 @@
 import { Accordion, Col, Form, Row } from "react-bootstrap";
 import ts from "typescript";
 
+
+
+export function renderSourceFile(sourceFile: ts.SourceFile): React.ReactNode {
+  function forEachChild(node: ts.Node) {
+    const nodes: ts.Node[] = [];
+    node.forEachChild(child => {
+      nodes.push(child);
+      return undefined;
+    });
+    return nodes;
+  }
+
+  return renderNode(sourceFile, forEachChild);
+}
+
+
+
 /**
  * рендерим код графически
  * @param node 
  */
-export function renderCode(node: ts.Node): React.ReactNode {
+function renderNode(node: ts.Node, getChildren: (node: ts.Node) => (ts.Node[])): React.ReactNode {
+  const children = getChildren(node);
+  const kindName = ts.SyntaxKind[node.kind];
+  console.log(kindName)
+
   switch (node.kind) {
     case ts.SyntaxKind.SourceFile: {
       return (
-        <div>{ts.forEachChild(node, renderCode)}</div>
+        <>{children.map(n => renderNode(n, getChildren))}</>
       )
     }
     case ts.SyntaxKind.FunctionDeclaration: {
@@ -26,25 +47,31 @@ export function renderCode(node: ts.Node): React.ReactNode {
                 <span style={piska}>{`ƒ`}</span>
                 <span>{name}</span>
               </Accordion.Header>
-              <Accordion.Body>
-                {params.map(param => (
-                  <Form.Group as={Row}>
-                    {/* @ts-ignore */}
-                    <Form.Label column sm={4}>{param.name.escapedText}</Form.Label>
-                    <Col>
-                      {param.type?.kind 
-                        ? <Form.Control 
-                          placeholder={ts.SyntaxKind[param.type.kind] ?? ''} 
-                          disabled 
-                          size="sm"
-                          />
-                        : null
-                      }
-                    </Col>
-                  </Form.Group>
-                ))}
-                <hr />
-                {ts.forEachChild(node, renderCode)}
+              <Accordion.Body style={{ marginTop:'1rem' }}>
+                {params && params.length
+                  ? <>
+                    <p>input params</p>
+                    {params.map((param, index) => (
+                      <Form.Group as={Row} key={index}>
+                        {/* @ts-ignore */}
+                        <Form.Label column sm={4}>{param.name.escapedText}</Form.Label>
+                        <Col>
+                          {param.type?.kind 
+                            ? <Form.Control 
+                              placeholder={ts.SyntaxKind[param.type.kind] ?? ''} 
+                              disabled 
+                              size="sm"
+                              />
+                            : null
+                          }
+                        </Col>
+                      </Form.Group>
+                    ))}
+                    <hr />
+                  </>
+                  : null
+                }
+                {children.map(n => renderNode(n, getChildren))}
               </Accordion.Body>
             </Accordion.Item>
           </Accordion>
@@ -53,10 +80,14 @@ export function renderCode(node: ts.Node): React.ReactNode {
     }
     case ts.SyntaxKind.Block: {
       return(
-        <>{ts.forEachChild(node, renderCode)}</>
+        <>{children.map(n => renderNode(n, getChildren))}</>
       )
     }
-    default: return null
+    default: {
+      return(
+        <>{children.map(n => renderNode(n, getChildren))}</>
+      )
+    }
   }
 }
 
